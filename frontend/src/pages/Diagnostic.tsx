@@ -1,7 +1,7 @@
 import React from 'react';
 
-
 import DiagnosticQuestions from '../components/DiagnosticQuestions';
+import ExcelDownloadButton from '../components/ExcelDownloadButton';
 
 const Diagnostic: React.FC = () => {
   return (

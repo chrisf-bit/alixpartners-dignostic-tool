@@ -4,15 +4,25 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import { apiFetch } from '../api';
 
+type User = {
+  id: string;
+  name: string;
+  email: string;
+  role?: string;
+};
+
 const Admin: React.FC = () => {
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     apiFetch('/admin/users')
       .then(setUsers)
-      .catch(e => setError(e.message))
+      .catch((e: unknown) => {
+        if (e instanceof Error) setError(e.message);
+        else setError(String(e));
+      })
       .finally(() => setLoading(false));
   }, []);
 

@@ -9,17 +9,29 @@ import FocusAreaRecommendations from '../components/FocusAreaRecommendations';
 
 const userId = 'demo-user-id'; // Replace with actual user session logic
 
+type ProfileType = {
+  name: string;
+  email: string;
+  competencies?: Record<string, { score: number; level: string }>;
+  strengths?: string[];
+  focus_areas?: Array<{ competency: string; recommendation: string }>;
+};
+
 const Profile: React.FC = () => {
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<ProfileType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     apiFetch(`/profile/me?userId=${userId}`)
       .then(setProfile)
-      .catch(e => setError(e.message))
+      .catch((e: unknown) => {
+        if (e instanceof Error) setError(e.message);
+        else setError(String(e));
+      })
       .finally(() => setLoading(false));
   }, []);
+
 
   if (loading) return <div>Loading profile...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -38,7 +50,7 @@ const Profile: React.FC = () => {
       <div className="mb-4">Email: {profile.email}</div>
       <h3 className="font-semibold mb-2">Competencies</h3>
       <div>
-        {profile.competencies && Object.entries(profile.competencies).map(([key, value]: any) => (
+        {profile.competencies && Object.entries(profile.competencies).map(([key, value]: [string, { score: number; level: string }]) => (
           <CompetencyBar key={key} label={key} score={value.score} level={value.level} />
         ))}
       </div>
@@ -50,7 +62,7 @@ const Profile: React.FC = () => {
       </ul>
       <h3 className="font-semibold mt-4 mb-2">Focus Areas</h3>
       <ul>
-        {profile.focus_areas && profile.focus_areas.map((fa: any) => (
+        {profile.focus_areas && profile.focus_areas.map((fa: { competency: string; recommendation: string }) => (
           <li key={fa.competency}>
             <span className="font-bold">{fa.competency}</span>: {fa.recommendation}
           </li>

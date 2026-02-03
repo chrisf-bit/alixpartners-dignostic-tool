@@ -6,9 +6,12 @@ import { apiFetch } from '../api';
 
 const managerId = 'demo-manager-id'; // Replace with actual manager session logic
 
+type Member = { id: string; name: string; email: string };
+type Summary = { completed?: number; total?: number } | null;
+
 const Team: React.FC = () => {
-  const [members, setMembers] = useState<any[]>([]);
-  const [summary, setSummary] = useState<any>(null);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [summary, setSummary] = useState<Summary>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -17,11 +20,14 @@ const Team: React.FC = () => {
       apiFetch(`/team/members?managerId=${managerId}`),
       apiFetch(`/team/summary?managerId=${managerId}`)
     ])
-      .then(([members, summary]) => {
-        setMembers(members);
-        setSummary(summary);
+      .then(([m, s]) => {
+        setMembers(m);
+        setSummary(s);
       })
-      .catch(e => setError(e.message))
+      .catch((e: unknown) => {
+        if (e instanceof Error) setError(e.message);
+        else setError(String(e));
+      })
       .finally(() => setLoading(false));
   }, []);
 

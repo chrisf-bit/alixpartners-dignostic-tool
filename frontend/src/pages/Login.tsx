@@ -21,8 +21,9 @@ const Login: React.FC = () => {
         body: JSON.stringify({ email })
       });
       setStatus('Magic link sent! Check your email.');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) setError(err.message);
+      else setError(String(err));
     } finally {
       setLoading(false);
     }
