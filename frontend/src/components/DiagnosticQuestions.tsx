@@ -16,7 +16,7 @@ const DiagnosticQuestions: React.FC = () => {
             <div className="font-semibold">{q.section}: {q.question}</div>
             {q.type === 'multiple-choice' ? (
               <div className="flex gap-2 mt-2">
-                {q.options.map((opt: string) => (
+                {(q.options || []).map((opt: string) => (
                   <button key={opt} className="border px-2 py-1 rounded">{opt}</button>
                 ))}
               </div>

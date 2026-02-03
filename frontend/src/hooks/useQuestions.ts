@@ -4,6 +4,8 @@ import { apiFetch } from '../api';
 type Question = {
   id: string;
   question: string;
+  section?: string;
+  type?: 'multiple-choice' | 'text';
   competency?: string;
   options?: string[];
 };
